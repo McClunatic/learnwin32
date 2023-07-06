@@ -1,6 +1,7 @@
 // See: https://learn.microsoft.com/en-us/windows/win32/learnwin32/example--the-open-dialog-box
 #include <windows.h>
 #include <shobjidl.h>
+#include <comdef.h>
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
@@ -14,16 +15,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
         hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
                 IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
 
+        _COM_SMARTPTR_TYPEDEF(IFileOpenDialog, __uuidof(IFileOpenDialog));
+        IFileOpenDialogPtr smartFileOpen(pFileOpen);
+
         if (SUCCEEDED(hr))
         {
             // Show the Open dialog box.
-            hr = pFileOpen->Show(NULL);
+            hr = smartFileOpen->Show(NULL);
 
             // Get the file name from the dialog box.
             if (SUCCEEDED(hr))
             {
                 IShellItem *pItem;
-                hr = pFileOpen->GetResult(&pItem);
+                hr = smartFileOpen->GetResult(&pItem);
                 if (SUCCEEDED(hr))
                 {
                     PWSTR pszFilePath;
