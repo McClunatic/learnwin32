@@ -1,4 +1,6 @@
 // See: https://learn.microsoft.com/en-us/windows/win32/learnwin32/example--the-open-dialog-box
+#include <sstream>
+#include <typeinfo>
 #include <windows.h>
 #include <shobjidl.h>
 #include <comdef.h>
@@ -17,6 +19,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 
         _COM_SMARTPTR_TYPEDEF(IFileOpenDialog, __uuidof(IFileOpenDialog));
         IFileOpenDialogPtr smartFileOpen(pFileOpen);
+
+        std::stringstream os;
+        os << "pFileOpen type: " << typeid(pFileOpen).name() << '\n';
+        os << "smartFileOpen type: " << typeid(smartFileOpen).name() << '\n';
+        os << "&(*smartFileOpen) type: " << typeid(&(*smartFileOpen)).name() << '\n';
+        // OutputDebugStringA(os.str().c_str());
+        MessageBoxA(NULL, os.str().c_str(), "Debug", MB_OK);
 
         if (SUCCEEDED(hr))
         {
